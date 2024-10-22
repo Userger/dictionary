@@ -14,6 +14,24 @@ class DrawMenu:
         self._interface = interface
 
 
+    async def start(self):
+        tty.setcbreak(sys.stdout)
+        os.system('clear')
+
+        while True:
+            try:
+                self._reader = await create_stdin_reader()
+                menu_list = self._interface.get_menu().menu_list()
+                coords = self._draw_menu_list(menu_list)
+                num = await self._next_menu_num(coords)
+                await self._interface.next(num)
+
+            except Exit:
+                break
+            except Escape:
+                await self._interface.back()
+
+
     def _draw_menu_list(self, menu_list):
         coords = []
         os.system('clear')
@@ -27,25 +45,7 @@ class DrawMenu:
         return coords
 
 
-    async def start(self):
-        tty.setcbreak(sys.stdout)
-        os.system('clear')
-
-        while True:
-            try:
-                self._reader = await create_stdin_reader()
-                menu_list = self._interface.get_menu().menu_list()
-                coords = self._draw_menu_list(menu_list)
-                num = await self.get_menu_num(coords)
-                await self._interface.next(num)
-
-            except Exit:
-                break
-            except Escape:
-                await self._interface.back()
-
-
-    async def get_menu_num(self, coords):
+    async def _next_menu_num(self, coords):
         cursor_pos = 0
         def move_cursor():
             sys.stdout.write(f'\033[{coords[cursor_pos]}H')
@@ -54,12 +54,12 @@ class DrawMenu:
 
         while (diraction := await self._reader.read(4)) != b'\n':
 
-            if diraction in (b'j', b'w', b'J', b'W',) \
+            if diraction in (b'j', b'J', b'\x1b[B') \
               and cursor_pos<len(coords)-1:
                 cursor_pos += 1
                 move_cursor()
 
-            elif diraction in (b'k', b'r', b'K', b'R',) \
+            elif diraction in (b'k', b'K', b'\x1b[A') \
               and cursor_pos>0:
                 cursor_pos -= 1
                 move_cursor()
@@ -68,4 +68,3 @@ class DrawMenu:
                 raise Escape()
 
         return cursor_pos
-

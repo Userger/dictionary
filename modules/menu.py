@@ -10,6 +10,7 @@ class Menu:
         for menu in menu_list:
             menu.set_parent(self)
         self._menu_list.extend(menu_list)
+        return self
 
     def menu_list(self):
         return self._menu_list
@@ -36,3 +37,9 @@ class ExitMenu(Menu):
 class EscapeMenu(Menu):
     async def run(self):
         raise Escape()
+
+
+class InputMenu(Menu):
+    async def run(self):
+        pass
+

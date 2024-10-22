@@ -60,11 +60,11 @@ class Level(Menu):
         mode = self._parent.title
         if mode == 'common':
 
-            if self._range_start <= 1000:
+            if self._range_start < 1000:
                 with open(COMMON_DICT_DIRS[0]) as f:
                     return f.readlines()
 
-            elif self._range_start <= 2000:
+            elif self._range_start < 2000:
                 self._range_start = self._range_start - 1000
                 with open(COMMON_DICT_DIRS[1]) as f:
                     return f.readlines()
