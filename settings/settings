@@ -1,0 +1,2 @@
+COMMON_DICT_DIRS='dicts/1-1000','dicts/2-1000'
+SELF_DICT_DIRS='selfdict/1'
