@@ -97,3 +97,20 @@ class Level(Menu):
             raise EmptyDict()
         return cliped
 
+class DirLevel(Level):
+    def __init__(self, title, dir, subtitle='', *,
+                 range_start=0,
+                 range_num=None,
+                 duration=60,
+                 amount=None):
+        super().__init__(title + ' ' + subtitle,
+                         range_start=range_start,
+                         range_num=range_num,
+                         duration=duration,
+                         amount=amount)
+        self._dir = dir
+        self._filename = title
+    def _load_lines(self):
+        with open(f"dicts/{self._dir}/{self._filename}") as f:
+            return f.readlines()
+

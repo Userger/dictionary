@@ -1,10 +1,9 @@
 import asyncio
 from modules.menu import Menu, ExitMenu, EscapeMenu
-from modules.advancedmenu import NewTextEditorMenu
+from modules.advancedmenu import NewTextEditorMenu, TextEditorMenu
 from modules.interface import MenuInterface
 from modules.drawmenu import DrawMenu
-from modules.texteditor import TextEditorMenu
-from settings.levels import self_dict_levels, common_levels
+from settings.levels import self_dict_levels, common_levels, category_levels
 from settings import SELF_DICT_DIRS
 
 async def main():
@@ -14,13 +13,16 @@ async def main():
 
     play_common = Menu('common').add_submenu(*common_levels)
     play_self_dict = Menu('dict').add_submenu(*self_dict_levels)
+    play_category = Menu('categories').add_submenu(*category_levels)
 
     play_menu.add_submenu(play_common,
-                          play_self_dict)
+                          play_self_dict,
+                          play_category)
 
     # DICTIONARY MENU
     dict_menu = Menu('dict manage')
-    dict_menu.add_submenu(TextEditorMenu('dict 1', SELF_DICT_DIRS[0]))
+    dict_menu.add_submenu(TextEditorMenu('self dict 1', SELF_DICT_DIRS[0]),
+                          TextEditorMenu('animals', 'dicts/categories/animals'))
 
     # EXIT MENU
     exit_menu = Menu('exit')

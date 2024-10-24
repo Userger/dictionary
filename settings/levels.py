@@ -1,4 +1,4 @@
-from modules.level import Level
+from modules.level import Level, DirLevel
 
 self_dict_levels = (
     Level('last10', range_start=-10),
@@ -33,3 +33,8 @@ common_levels = (
           range_num=100,
           amount=10),
 )
+
+category_levels = [
+    DirLevel('animals', 'categories'),
+    DirLevel('animals', 'categories', '3 min', duration=3*60)
+]
