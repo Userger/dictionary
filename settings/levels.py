@@ -4,6 +4,7 @@ self_dict_levels = (
     Level('last10', range_start=-10),
     Level('last100', range_start=-100),
     Level('all'),
+    Level('all long (5min)', duration=5*60),
 )
 
 common_levels = (

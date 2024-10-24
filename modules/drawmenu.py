@@ -17,10 +17,11 @@ class DrawMenu:
     async def start(self):
         tty.setcbreak(sys.stdout)
         os.system('clear')
+        self._reader = await create_stdin_reader()
+        self._interface.set_reader(self._reader)
 
         while True:
             try:
-                self._reader = await create_stdin_reader()
                 menu_list = self._interface.get_menu().menu_list()
                 coords = self._draw_menu_list(menu_list)
                 num = await self._next_menu_num(coords)

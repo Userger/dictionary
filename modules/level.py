@@ -26,7 +26,7 @@ class Level(Menu):
     async def _start(self):
         try:
             self._opts['dictionary'] = self._get_dict()
-            gameprocess = GameProcess(**self._opts)
+            gameprocess = GameProcess(self._reader, **self._opts)
             results = await gameprocess.start()
             self._menu_list = [
                 Menu(f'exited: {results["exited"]}'),

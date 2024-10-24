@@ -7,11 +7,12 @@ from .util import create_stdin_reader
 from .exceptions import Escape
 
 class GameProcess:
-    def __init__(self, *,
+    def __init__(self, reader, *,
                  duration,
                  dictionary):
         self._duration = duration
         self._dict = dictionary
+        self._reader = reader
         self.fails = 0
         self.points = 0
 
@@ -20,7 +21,7 @@ class GameProcess:
         self._draw_msg2 = Drawer(1, 2).draw
         self._draw_time = Drawer(1, 3).draw
         self._draw_word = Drawer(1, 4).draw
-        self._read_word = (await InputReader.create(1, 6)).read
+        self._read_word = InputReader(1, 6, self._reader).read
         self._draw_translates = Drawer(1, 9).draw
 
         tasks = [t_task := asyncio.create_task(self._timer()),
@@ -91,13 +92,10 @@ class Drawer:
 
 
 class InputReader:
-    @classmethod
-    async def create(cls, x, y):
-        self = cls()
+    def __init__(self, x, y, reader):
         self._x = x
         self._y = y
-        self._reader = await create_stdin_reader()
-        return self
+        self._reader = reader
 
     async def read(self):
         sys.stdout.write(f'\033[{self._y};{self._x}H')

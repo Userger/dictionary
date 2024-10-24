@@ -1,4 +1,6 @@
 from .exceptions import Escape, Exit
+import sys
+import os
 
 class Menu:
     def __init__(self, title):
@@ -21,6 +23,8 @@ class Menu:
     def get_parent(self):
         return self._parent
 
+    def set_reader(self, reader):
+        self._reader = reader
 
     # calling when menu has no menu_list
     async def run(self):
@@ -40,6 +44,28 @@ class EscapeMenu(Menu):
 
 
 class InputMenu(Menu):
+    def _clear(self):
+        os.system('clear')
+    async def _read(self):
+        chars = []
+        while (char := await self._reader.read(4)) != b'\n':
+            if char == b'\x7F' and chars:
+                chars.pop()
+                sys.stdout.write('\033[D')
+                sys.stdout.write(' ')
+                sys.stdout.write('\033[D')
+                sys.stdout.flush()
+            elif char == b'\x1B':
+                raise Escape()
+            else:
+                char = char.decode()
+                chars.append(char)
+                sys.stdout.write(char)
+                sys.stdout.flush()
+
+        string = ''.join(chars)
+        return string
+
     async def run(self):
-        pass
+        res = await self._read()
 

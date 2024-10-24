@@ -1,5 +1,6 @@
 import asyncio
 from modules.menu import Menu, ExitMenu, EscapeMenu
+from modules.advancedmenu import NewTextEditorMenu
 from modules.interface import MenuInterface
 from modules.drawmenu import DrawMenu
 from modules.texteditor import TextEditorMenu
@@ -19,7 +20,7 @@ async def main():
 
     # DICTIONARY MENU
     dict_menu = Menu('dict manage')
-    dict_menu.add_submenu(TextEditorMenu('dict 1', SELF_DICT_DIRS))
+    dict_menu.add_submenu(TextEditorMenu('dict 1', SELF_DICT_DIRS[0]))
 
     # EXIT MENU
     exit_menu = Menu('exit')
@@ -29,7 +30,8 @@ async def main():
     # SETTINGS MENU
     settings_menu = Menu('settings')
     text_editor = Menu('text editor')
-
+    text_editor.add_submenu(NewTextEditorMenu('change'))
+    settings_menu.add_submenu(text_editor)
 
     # MAIN MENU
     main_menu = Menu('main menu')

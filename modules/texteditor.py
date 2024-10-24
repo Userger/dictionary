@@ -1,6 +1,7 @@
 import os
+import importlib
+import settings.settings
 from .menu import Menu
-from settings.settings import TEXT_EDITOR
 class TextEditorMenu(Menu):
     def __init__(self, title, dir=None):
         super().__init__(title)
@@ -8,7 +9,8 @@ class TextEditorMenu(Menu):
             self.title = 'Error: bad menu args!'
         self._dir = dir
     async def run(self):
+        importlib.reload(settings.settings)
         if not self._dir:
             return
-        os.system(f'{TEXT_EDITOR} {self._dir}')
+        os.system(f'{settings.settings.TEXT_EDITOR} {self._dir}')
 
