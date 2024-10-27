@@ -11,14 +11,14 @@ class Level(Menu):
     def __init__(self, title, *,
                  range_start=0,
                  range_num=None,
-                 duration=60,
+                 duration=None,
                  amount=None):
         super().__init__(title)
-        self._range_start = range_start
-        self._range_num = range_num
-        self._amount = amount
+        self._range_start = range_start or 0
+        self._range_num = range_num or None
+        self._amount = amount or None
         self._opts = {
-            'duration': duration,
+            'duration': duration or 60,
             'dictionary': None,
         }
 
@@ -75,7 +75,7 @@ class Level(Menu):
 
 
     def _random_lines(self, lines):
-        if not self._amount:
+        if not self._amount or self._amount > len(lines):
             return lines
 
         result = set()

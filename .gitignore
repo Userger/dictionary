@@ -1,2 +1,3 @@
 __pycache__/
 start_dict_app.sh
+dicts/selfdict/*

@@ -21,8 +21,7 @@ async def main():
 
     # DICTIONARY MENU
     dict_menu = Menu('dict manage')
-    dict_menu.add_submenu(TextEditorMenu('self dict 1', SELF_DICT_DIRS[0]),
-                          TextEditorMenu('animals', 'dicts/categories/animals'))
+    dict_menu.add_submenu(TextEditorMenu('self dict 1', SELF_DICT_DIRS[0]))
 
     # EXIT MENU
     exit_menu = Menu('exit')
