@@ -24,15 +24,27 @@ class GameProcess:
         self._read_word = InputReader(1, 6, self._reader).read
         self._draw_translates = Drawer(1, 9).draw
 
+        self._fail_words = {}
+
         tasks = [t_task := asyncio.create_task(self._timer()),
                  p_task := asyncio.create_task(self._process())]
         done, pending = await asyncio.wait(tasks,
                            return_when=asyncio.FIRST_COMPLETED)
         [task.cancel() for task in pending]
-        await asyncio.sleep(0)
-        return {'points': self.points,
-                'fails': self.fails,
-                'exited': done.pop().result()}
+
+        if (exited := done.pop().result()) == 'timeout':
+            os.system('clear')
+            print("TIME'S OUT")
+            await asyncio.sleep(2)
+        else:
+            await asyncio.sleep(0)
+
+        return {
+            'points': self.points,
+            'fails': self.fails,
+            'exited': exited,
+            'failed_words': self._fail_words,
+        }
 
 
     async def _timer(self):
@@ -53,6 +65,7 @@ class GameProcess:
             self._draw_translates(f'possible translates: {translates}')
             self._draw_msg('Fails++')
             self._draw_msg2(f'points: {self.points} / fails: {self.fails}')
+            self._fail_words[en_word] = translates
 
         if old_fails == self.fails:
             self.points += 1

@@ -12,11 +12,13 @@ class Level(Menu):
                  range_start=0,
                  range_num=None,
                  duration=None,
-                 amount=None):
+                 amount=None,
+                 dictionary = None):
         super().__init__(title)
         self._range_start = range_start or 0
         self._range_num = range_num or None
         self._amount = amount or None
+        self._dictionary = dictionary
         self._opts = {
             'duration': duration or 60,
             'dictionary': None,
@@ -28,12 +30,23 @@ class Level(Menu):
             self._opts['dictionary'] = self._get_dict()
             gameprocess = GameProcess(self._reader, **self._opts)
             results = await gameprocess.start()
+
+
             self._menu_list = [
+                EscapeMenu('back'),
+                Menu(''),
+                Menu('Results:'),
                 Menu(f'exited: {results["exited"]}'),
                 Menu(f'points: {results["points"]}'),
                 Menu(f'fails: {results["fails"]}'),
-                EscapeMenu('back'),
             ]
+
+            if results["fails"]:
+                fails_level = Level('play with fails',
+                    dictionary=results['failed_words'])
+                fails_level.set_parent(self._parent)
+                self._menu_list.insert(0, fails_level)
+
         except EmptyDict:
             self._menu_list = [
                 Menu(f'empty dictionary:  INCORRECT level settings!'),
@@ -41,6 +54,11 @@ class Level(Menu):
             ]
 
     def _get_dict(self):
+        if isinstance(self._dictionary, dict):
+            return tuple(self._dictionary.items())
+        elif isinstance(self._dictionary, (list, tuple)):
+            return self._dictionary
+
         lines = self._load_lines()
         cliped = self._clip_lines(lines)
         randomlines = self._random_lines(cliped)
