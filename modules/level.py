@@ -15,10 +15,10 @@ class Level(Menu):
                  amount=None,
                  dictionary = None):
         super().__init__(title)
-        self._range_start = range_start or 0
-        self._range_num = range_num or None
-        self._amount = amount or None
-        self._dictionary = dictionary
+        self._range_start: int = range_start or 0
+        self._range_num: int | None = range_num or None
+        self._amount: int | None = amount or None
+        self._dictionary: set | tuple | list | dict = dictionary
         self._opts = {
             'duration': duration or 60,
             'dictionary': None,
@@ -53,11 +53,13 @@ class Level(Menu):
                 EscapeMenu('back'),
             ]
 
-    def _get_dict(self):
+    def _get_dict(self) -> list | tuple:
         if isinstance(self._dictionary, dict):
             return tuple(self._dictionary.items())
         elif isinstance(self._dictionary, (list, tuple)):
             return self._dictionary
+        elif isinstance(self._dictionary, set):
+            return tuple(self._dictionary)
 
         lines = self._load_lines()
         cliped = self._clip_lines(lines)
@@ -74,7 +76,7 @@ class Level(Menu):
         await self._start()
 
 
-    def _load_lines(self):
+    def _load_lines(self) -> list[str]:
         mode = self._parent.title
         if mode == 'common':
 
@@ -92,7 +94,7 @@ class Level(Menu):
                 return f.readlines()
 
 
-    def _random_lines(self, lines):
+    def _random_lines(self, lines: list[tuple[str, tuple[str]]]) -> set[tuple[str, tuple[str]]]:
         if not self._amount or self._amount > len(lines):
             return lines
 
@@ -103,13 +105,13 @@ class Level(Menu):
         return result
 
 
-    def _line_to_tuple(self, line):
+    def _line_to_tuple(self, line: str) -> tuple[str, tuple[str]]:
         eng, ru = line.split('=')
         ru = tuple(map(lambda w: w.strip(), ru.split(',')))
         return (eng.strip(), ru)
 
 
-    def _clip_lines(self, lines):
+    def _clip_lines(self, lines: list) -> list:
         cliped = lines[self._range_start:][:self._range_num]
         if not cliped:
             raise EmptyDict()
@@ -126,9 +128,9 @@ class DirLevel(Level):
                          range_num=range_num,
                          duration=duration,
                          amount=amount)
-        self._dir = dir
-        self._filename = title
-    def _load_lines(self):
+        self._dir: str = dir
+        self._filename: str = title
+    def _load_lines(self) -> list[str]:
         with open(f"dicts/{self._dir}/{self._filename}") as f:
             return f.readlines()
 
