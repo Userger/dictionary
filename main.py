@@ -3,25 +3,37 @@ from modules.menu import Menu, ExitMenu, EscapeMenu
 from modules.advancedmenu import NewTextEditorMenu, TextEditorMenu
 from modules.interface import MenuInterface
 from modules.drawmenu import DrawMenu
-from settings.levels import self_dict_levels, common_levels, category_levels
-from settings import SELF_DICT_DIRS
+from settings.levels import get_levels
+from settings import DICT_DIR
+
+from os import listdir
+from pathlib import Path
+from copy import deepcopy
+
 
 async def main():
-
     # PLAY MENU
     play_menu = Menu('play')
 
-    play_common = Menu('common').add_submenu(*common_levels)
-    play_self_dict = Menu('dict').add_submenu(*self_dict_levels)
-    play_category = Menu('categories').add_submenu(*category_levels)
+    dicts_path = Path(DICT_DIR)
+    for directory_name in listdir(dicts_path):
+        mode_menu = Menu(directory_name)
+        for dct in listdir(dicts_path / directory_name):
+            mode_submenu = Menu(dct)
+            mode_submenu_levels = get_levels(directory_name)
+            mode_submenu.add_submenu(*mode_submenu_levels)
+            mode_menu.add_submenu(mode_submenu)
 
-    play_menu.add_submenu(play_common,
-                          play_self_dict,
-                          play_category)
+        play_menu.add_submenu(mode_menu)
+
 
     # DICTIONARY MENU
     dict_menu = Menu('dict manage')
-    dict_menu.add_submenu(TextEditorMenu('self dict 1', SELF_DICT_DIRS[0]))
+    dict_submenu = [
+            TextEditorMenu(f'edit {name}', str(Path(DICT_DIR) / "selfdict" / name))
+            for name in listdir(dicts_path / "selfdict")
+    ]
+    dict_menu.add_submenu(*dict_submenu)
 
     # EXIT MENU
     exit_menu = Menu('exit')

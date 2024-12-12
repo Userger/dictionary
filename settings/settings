@@ -1,4 +1,3 @@
-COMMON_DICT_DIRS='dicts/common/1-1000', 'dicts/common/2-1000'
-SELF_DICT_DIRS='dicts/selfdict/1', placeholder
+DICT_DIR='dicts/'
 
 TEXT_EDITOR=vim

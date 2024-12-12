@@ -7,11 +7,7 @@ def load_settings():
             if line.lstrip().startswith('#') or not line.strip():
                 continue
             setting, value = line.split('=')
-            val = tuple(map(lambda w: w.strip(strip_symbs), value.split(',')))
-            if len(val) == 1:
-                d[setting.strip()] = val[0]
-            else:
-                d[setting.strip()] = val
+            d[setting.strip()] = value.strip(strip_symbs)
 
         return d
 

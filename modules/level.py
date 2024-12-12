@@ -2,18 +2,21 @@ from .menu import Menu, EscapeMenu
 from .gameprocess import GameProcess
 from .exceptions import Escape
 from random import randrange
-from settings import COMMON_DICT_DIRS, SELF_DICT_DIRS
+from settings import DICT_DIR
+from pathlib import Path
 
 class EmptyDict(Exception):
     pass
 
 class Level(Menu):
-    def __init__(self, title, *,
-                 range_start=0,
-                 range_num=None,
-                 duration=None,
-                 amount=None,
-                 dictionary = None):
+    def __init__(self,
+         title, *,
+         range_start=0,
+         range_num=None,
+         duration=None,
+         amount=None,
+         dictionary = None
+     ):
         super().__init__(title)
         self._range_start: int = range_start or 0
         self._range_num: int | None = range_num or None
@@ -77,21 +80,10 @@ class Level(Menu):
 
 
     def _load_lines(self) -> list[str]:
-        mode = self._parent.title
-        if mode == 'common':
-
-            if self._range_start < 1000:
-                with open(COMMON_DICT_DIRS[0]) as f:
-                    return f.readlines()
-
-            elif self._range_start < 2000:
-                self._range_start = self._range_start - 1000
-                with open(COMMON_DICT_DIRS[1]) as f:
-                    return f.readlines()
-
-        elif mode == 'dict':
-            with open(SELF_DICT_DIRS[0]) as f:
-                return f.readlines()
+        mode = self._parent.get_parent().title
+        dct = self._parent.title
+        with open(Path(DICT_DIR) / mode / dct) as f:
+            return f.readlines()
 
 
     def _random_lines(self, lines: list[tuple[str, tuple[str]]]) -> set[tuple[str, tuple[str]]]:
