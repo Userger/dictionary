@@ -46,24 +46,24 @@ class Level(Menu):
             gameprocess = GameProcess(self._reader, **self._opts)
             result: GameResult = await gameprocess.run()
 
-            if fails := result.fails:
-                constraint = fails * 2
-                fails_level = Level(
-                    "play with fails",
-                    dictionary=list(result.failed_words.items()),
-                    constraint=constraint,
-                )
-                self._menu_list.append(fails_level)
-                fails_level.set_parent(self._parent)
-
-            self.add_submenu(
+            self._menu_list = [
                 EscapeMenu("back"),
                 Menu(""),
                 Menu("Results:"),
                 Menu(f"exited: {result.exited}"),
                 Menu(f"points: {result.points}"),
                 Menu(f"fails: {result.fails}"),
-            )
+            ]
+
+            if fails := result.fails:
+                constraint = fails * 5
+                fails_level = Level(
+                    "play with fails",
+                    dictionary=list(result.failed_words.items()),
+                    constraint=constraint,
+                )
+                fails_level.set_parent(self._parent)
+                self._menu_list.insert(0, fails_level)
 
         except EmptyDict:
             self._menu_list = [
